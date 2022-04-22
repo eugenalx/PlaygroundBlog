@@ -17,14 +17,14 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view('homepage',[
+        return view('/posts/indexPosts',[
             'posts' => Post::latest()->with('user')->paginate(10)
         ]);
     }
 
-    public function show1(User $user)
+    public function showUserPosts(User $user)
     {
-        return view('/homepage',[
+        return view('/posts/indexPosts',[
             'posts' => $user->posts
         ]);
     }
@@ -36,7 +36,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('components/createPost');
+        return view('posts/createPost');
     }
 
     /**
@@ -47,29 +47,19 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        // $attributes = $request->validate([
-        //     'postName' => 'required|max:100',
-        //     'postBody' => 'required'
-        // ]);
-
-
-
-
-
+       
         Post::create(array_merge($this->validatePost(),[
             'user_id' => request()->user()->id,
         ]));
-
         return redirect('/')->with('succes', 'The post has been saved');
     }
-
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Post $post)
     {
         //
     }
@@ -80,9 +70,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+       return view('posts/editPost', ['post' => $post]);
     }
 
     /**
@@ -92,9 +82,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Post $post)
     {
-        //
+        $attributes = $this->validatePost($post);
+        $post->update($attributes);
+        return redirect('/')->with('succes', 'The post has been saved');
     }
 
     /**
@@ -103,9 +95,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        $post->delete();
+
+        return back()->with('success','The post was deleted!');
     }
 
     protected function validatePost(?Post $post = null) : array
@@ -114,7 +108,7 @@ class PostController extends Controller
         return request()->validate([
             'name' => 'required',
             'body' => 'required',
-            // 'user_id' => ['required', Rule::exists('User' ,'id')] 
+            // 'user_id' => ['required', Rule::exists('User' ,'id')]
         ]);
     }
 }
