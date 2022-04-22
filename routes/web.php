@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/',[PostController::class,'index'])->middleware('auth');
-Route::get('/createPost',[PostController::class,'create'])->middleware('auth');
+Route::get('/createPost',[PostController::class,'create'])->middleware('can:user');
 Route::get('/editPost/{post}',[PostController::class,'edit'])->middleware('auth');
 Route::delete('/deletePost/{post}',[PostController::class,'destroy'])->middleware('auth');
 Route::post('/createPost', [PostController::class, 'store'])->middleware('auth');

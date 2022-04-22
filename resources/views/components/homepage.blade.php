@@ -3,11 +3,13 @@
       
         <div class="d-flex col-10 mx-auto justify-content-between align-items-center ">
             @auth
-                <div class="col-6">Welcome, {{ auth()->user()->name }}!</div>
+                <h3 class="col-6">Welcome, {{ auth()->user()->name }}!</h3>
             @else
                 <div class="col-6">Not sign in</div>
             @endauth
-            <x-form.button name="Create new post" target="/createPost" />
+            @cannot('admin')
+                <x-form.button name="Create new post" target="/createPost" />
+            @endcan
         </div>
         {{ $slot }}
     </div>

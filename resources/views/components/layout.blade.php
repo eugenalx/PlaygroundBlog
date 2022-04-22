@@ -24,11 +24,11 @@
 
 </head>
 
-<body >
+<body>
 
 
 
-    <div class=''>
+    <div class='bg-gray-100'>
 
         <div class="stickyHeader" >
             <x-header />

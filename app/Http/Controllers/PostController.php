@@ -24,7 +24,7 @@ class PostController extends Controller
 
     public function showUserPosts(User $user)
     {
-        return view('/posts/indexPosts',[
+        return view('/posts/indexPost',[
             'posts' => $user->posts
         ]);
     }
