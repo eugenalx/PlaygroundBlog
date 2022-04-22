@@ -6,7 +6,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
-
+use Illuminate\Validation\ValidationException;
 
 class PostController extends Controller
 {
@@ -17,15 +17,16 @@ class PostController extends Controller
      */
     public function index()
     {
+        $post = Post::latest()->with('user')->paginate(10);
         return view('/posts/indexPosts',[
-            'posts' => Post::latest()->with('user')->paginate(10)
+            'posts' => $post->sortDesc()
         ]);
     }
 
     public function showUserPosts(User $user)
     {
         return view('/posts/indexPost',[
-            'posts' => $user->posts
+            'posts' => $user->posts->sortDesc()
         ]);
     }
 
@@ -85,6 +86,11 @@ class PostController extends Controller
     public function update(Post $post)
     {
         $attributes = $this->validatePost($post);
+        if(!$attributes){
+            throw ValidationException::withMessages([
+                'name' => 'The name is too long!',
+            ]);
+        }
         $post->update($attributes);
         return redirect('/')->with('succes', 'The post has been saved');
     }
@@ -106,9 +112,8 @@ class PostController extends Controller
     {
         $post ??= new Post();
         return request()->validate([
-            'name' => 'required',
+            'name' => 'required|max:100',
             'body' => 'required',
-            // 'user_id' => ['required', Rule::exists('User' ,'id')]
         ]);
     }
 }
