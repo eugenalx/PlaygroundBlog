@@ -9,7 +9,7 @@
             @endauth
             @cannot('admin')
                 <x-form.button name="Create new post" target="/createPost" />
-            @endcan
+            @endcannot
         </div>
         {{ $slot }}
     </div>
