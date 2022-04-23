@@ -18,13 +18,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+Route::middleware('can:user')->group(function() {
+    Route::get('/createPost',[PostController::class,'create']);
+    Route::post('/createPost', [PostController::class, 'store']);
+    Route::get('/editPost/{post}', [PostController::class,'edit']);
+    Route::patch('/editPost/{post}', [PostController::class,'update']);
+});
+
+
 Route::get('/',[PostController::class,'index'])->middleware('auth');
-Route::get('/createPost',[PostController::class,'create'])->middleware('can:user');
-Route::get('/editPost/{post}',[PostController::class,'edit'])->middleware('auth');
-Route::delete('/deletePost/{post}',[PostController::class,'destroy'])->middleware('auth');
-Route::post('/createPost', [PostController::class, 'store'])->middleware('auth');
 Route::get('/showPost/{user}', [PostController::class, 'showUserPosts'])->middleware('auth');
-Route::patch('/editPost/{post}',[PostController::class,'update'])->middleware('auth');
+Route::delete('/deletePost/{post}',[PostController::class,'destroy'])->middleware('auth');
+
 
 
 
