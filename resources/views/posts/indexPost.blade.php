@@ -1,4 +1,4 @@
-<x-home>
+<x-posts>
     @can('admin')
         <div class="my-3">
             <h1 class="col-9">I am Admin</h1>
@@ -23,4 +23,4 @@
             </div>
         @endcannot
     @endforeach
-</x-home>
+</x-posts>

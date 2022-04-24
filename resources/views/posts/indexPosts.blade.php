@@ -1,4 +1,4 @@
-<x-home>
+<x-posts>
     @foreach ($posts as $post)
             <div class="my-3">
                 <h1 class="col-9">{{ $post->name }}</h1>
@@ -15,4 +15,4 @@
                 </div>
             @endcan
         @endforeach
-</x-home>
+</x-posts>
