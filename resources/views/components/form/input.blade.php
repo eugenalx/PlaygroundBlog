@@ -8,8 +8,6 @@
             required 
             placeholder="Post Title"
             {{ $attributes (['value' => old($name)]) }}
-    >
-    
-    <x-form.errors name="{{ $name }}" />
+    ><x-form.errors name="{{ $name }}" />
 </div>
 

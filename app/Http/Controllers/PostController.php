@@ -25,9 +25,13 @@ class PostController extends Controller
 
     public function showUserPosts(User $user)
     {
-        return view('/posts/indexPost',[
-            'posts' => $user->posts->sortDesc()
-        ]);
+        if($user->id === auth()->user()->id){
+            return view('/posts/indexPost',[
+                'posts' => $user->posts->sortDesc()
+            ]);
+        }
+        abort(403, 'Unauthorized action.');
+        return redirect('/') ;
     }
 
     /**
@@ -48,11 +52,15 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-       
-        Post::create(array_merge($this->validatePost(),[
+            Post::create(array_merge($this->validatePost(),[
             'user_id' => request()->user()->id,
         ]));
         return redirect('/')->with('succes', 'The post has been saved');
+
+        throw ValidationException::withMessages([
+            'name' => 'The name is too long!',
+        ]);
+
     }
     /**
      * Display the specified resource.
@@ -73,7 +81,15 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-       return view('posts/editPost', ['post' => $post]);
+
+        // dd($post->user_id);
+        if( $post->user_id === auth()->user()->id){
+            return view('posts/editPost', ['post' => $post]);
+        }
+
+        abort(403, 'Unauthorized action.');
+        return redirect('/') ;
+
     }
 
     /**
@@ -86,13 +102,12 @@ class PostController extends Controller
     public function update(Post $post)
     {
         $attributes = $this->validatePost($post);
-        if(!$attributes){
-            throw ValidationException::withMessages([
-                'name' => 'The name is too long!',
-            ]);
-        }
+     
         $post->update($attributes);
         return redirect('/')->with('succes', 'The post has been saved');
+        // throw ValidationException::withMessages([
+        //     'name' => 'The name is too long!',
+        // ]);
     }
 
     /**
@@ -103,9 +118,13 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $post->delete();
-
+        if( $post->user_id === request()->user()->id || request()->user()->role === 'admin'){
+            $post->delete();
         return back()->with('success','The post was deleted!');
+        }
+
+        abort(403, 'Unauthorized action.');
+        return redirect('/') ;
     }
 
     protected function validatePost(?Post $post = null) : array
@@ -114,6 +133,7 @@ class PostController extends Controller
         return request()->validate([
             'name' => 'required|max:100',
             'body' => 'required',
+            'user_id' => request()->user()->id,
         ]);
     }
 }

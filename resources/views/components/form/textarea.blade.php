@@ -6,7 +6,7 @@
         class="border border-gray-200 my-3 p-2" 
         required 
         rows="8"
-        placeholder="{{ $placeholder }}"
+        placeholder="{{ $placeholder  }}"
         {{ $attributes (['value' => old($name)]) }}
         >{{ $text }}</textarea>
     <x-form.errors name="{{ $name }}" />
