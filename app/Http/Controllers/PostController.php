@@ -24,14 +24,16 @@ class PostController extends Controller
 
     public function showAllPosts()
     {
+
         $post = Post::latest()->with('user')->paginate(10);
         return view('/posts/indexPosts',[
             'posts' => $post->sortDesc()
         ]);
     }
 
-    public function index(User $user)
+    public function index(User $user, Post $post)
     {
+        // $this->authorize('view', $post);
         return view('/posts/indexPost',[
                 'posts' => $user->posts->sortDesc()
             ]);
@@ -45,6 +47,7 @@ class PostController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Post::class);
         return view('posts/createPost');
     }
 
@@ -56,6 +59,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Post::class);
         Post::create(array_merge($this->validatePost(),[
             'user_id' => request()->user()->id,
         ]));
@@ -80,8 +84,9 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit(Request $request, Post $post)
     {
+        $this->authorize('update', $post);
         return view('posts/editPost', ['post' => $post]);
 
     }
@@ -95,6 +100,8 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        $this->authorize('update', $post);
+
         $attributes = $this->validatePost($post);
      
         $post->update($attributes);
@@ -109,6 +116,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $this->authorize('delete', $post);
         $post->delete();
         return back()->with('success','The post was deleted!');
     }

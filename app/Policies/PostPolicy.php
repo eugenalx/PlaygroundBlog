@@ -16,7 +16,7 @@ class PostPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user, Post $post)
     {
         //
     }
@@ -30,7 +30,7 @@ class PostPolicy
      */
     public function view(User $user, Post $post)
     {
-        //
+        return  $user->id === $post->user_id;
     }
 
     /**
@@ -41,7 +41,7 @@ class PostPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->role !== "admin";
     }
 
     /**
@@ -53,7 +53,7 @@ class PostPolicy
      */
     public function update(User $user, Post $post)
     {
-        //
+        return $user->id === $post->user_id;
     }
 
     /**
@@ -65,7 +65,8 @@ class PostPolicy
      */
     public function delete(User $user, Post $post)
     {
-        //
+        return ($user->id === $post->user_id) || $user->role === "admin";
+
     }
 
     /**
@@ -89,6 +90,5 @@ class PostPolicy
      */
     public function forceDelete(User $user, Post $post)
     {
-        //
     }
 }

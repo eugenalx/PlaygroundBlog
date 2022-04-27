@@ -32,10 +32,6 @@ Route::delete('/deletePost/{post}',[PostController::class,'destroy'])->middlewar
 
 
 
-
-
-
-
 Route::get("/login",[SessionController::class, 'create'])->name('login')->middleware('guest');
 Route::post("/login",[SessionController::class, 'store'])->name('login')->middleware('guest');
 Route::post("/logout",[SessionController::class, 'destroy']);
