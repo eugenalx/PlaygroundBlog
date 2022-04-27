@@ -6,16 +6,23 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
 
 class PostController extends Controller
 {
+
+    // public function __construct()
+    // {
+    //     $this->authorizeResource(Post::class, 'post');
+    // }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    public function showAllPosts()
     {
         $post = Post::latest()->with('user')->paginate(10);
         return view('/posts/indexPosts',[
@@ -23,15 +30,12 @@ class PostController extends Controller
         ]);
     }
 
-    public function showUserPosts(User $user)
+    public function index(User $user)
     {
-        if($user->id === auth()->user()->id){
-            return view('/posts/indexPost',[
+        return view('/posts/indexPost',[
                 'posts' => $user->posts->sortDesc()
             ]);
-        }
-        abort(403, 'Unauthorized action.');
-        return redirect('/') ;
+            
     }
 
     /**
@@ -52,20 +56,17 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-            Post::create(array_merge($this->validatePost(),[
+        Post::create(array_merge($this->validatePost(),[
             'user_id' => request()->user()->id,
         ]));
         return redirect('/')->with('succes', 'The post has been saved');
 
-        throw ValidationException::withMessages([
-            'name' => 'The name is too long!',
-        ]);
-
     }
+
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function show(Post $post)
@@ -76,19 +77,12 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function edit(Post $post)
     {
-
-        // dd($post->user_id);
-        if( $post->user_id === auth()->user()->id){
-            return view('posts/editPost', ['post' => $post]);
-        }
-
-        abort(403, 'Unauthorized action.');
-        return redirect('/') ;
+        return view('posts/editPost', ['post' => $post]);
 
     }
 
@@ -96,44 +90,37 @@ class PostController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Post $post)
+    public function update(Request $request, Post $post)
     {
         $attributes = $this->validatePost($post);
      
         $post->update($attributes);
         return redirect('/')->with('succes', 'The post has been saved');
-        // throw ValidationException::withMessages([
-        //     'name' => 'The name is too long!',
-        // ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function destroy(Post $post)
     {
-        if( $post->user_id === request()->user()->id || request()->user()->role === 'admin'){
-            $post->delete();
+        $post->delete();
         return back()->with('success','The post was deleted!');
-        }
-
-        abort(403, 'Unauthorized action.');
-        return redirect('/') ;
     }
 
+
+    //validation rules
     protected function validatePost(?Post $post = null) : array
     {
         $post ??= new Post();
         return request()->validate([
             'name' => 'required|max:100',
             'body' => 'required',
-            'user_id' => request()->user()->id,
-        ]);
+       ]);
     }
 }

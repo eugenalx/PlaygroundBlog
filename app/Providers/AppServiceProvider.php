@@ -2,14 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\Post;
 use App\Models\User;
+use App\Policies\PostPolicy;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Facades\Gate as FacadesGate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
+     /**
      * Register any application services.
      *
      * @return void
@@ -26,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+       
         FacadesGate::define('admin', function(User $user){
             return $user->role === 'admin';
         });

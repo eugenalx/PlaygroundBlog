@@ -21,13 +21,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('can:user')->group(function() {
     Route::get('/createPost',[PostController::class,'create']);
     Route::post('/createPost', [PostController::class, 'store']);
-    Route::get('/editPost/{post}', [PostController::class,'edit']);
-    Route::patch('/editPost/{post}', [PostController::class,'update']);
+    Route::get('/post/{post}/edit', [PostController::class,'edit']);
+    Route::patch('/post/{post}/edit', [PostController::class,'update']);
 });
 
 
-Route::get('/',[PostController::class,'index'])->middleware('auth');
-Route::get('/showPost/{user}', [PostController::class, 'showUserPosts'])->middleware('auth');
+Route::get('/',[PostController::class,'showAllPosts'])->middleware('auth');
+Route::get('/post/{user}/index', [PostController::class, 'index'])->middleware('auth');
 Route::delete('/deletePost/{post}',[PostController::class,'destroy'])->middleware('auth');
 
 

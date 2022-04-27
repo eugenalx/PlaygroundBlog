@@ -19,7 +19,7 @@
                     @method('DELETE')
                     <button type="submit" class="btn btn-outline-primary" onclick="return confirm('Sure Want Delete?')">Delete</button>
                 </form>
-                <a href="/editPost/{{ $post->id }}" class="btn btn-primary ms-2 px-4 py-1">Edit</a>
+                <a href="/post/{{ $post->id }}/edit" class="btn btn-primary ms-2 px-4 py-1">Edit</a>
             </div>
         @endcannot
     @endforeach

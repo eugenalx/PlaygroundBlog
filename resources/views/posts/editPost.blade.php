@@ -1,7 +1,7 @@
 <x-posts>
     <div class="d-flex flex-column mx-auto">
         <h2 class="text-black-50 ">Edit post {{ $post->name }}</h2>
-        <form method="POST" action="/editPost/{{ $post->id }}" >
+        <form method="POST" action="/post/{{ $post->id }}/edit" >
             @csrf
             @method('PATCH')
             <x-form.input name="name"  :value="old('name', $post->name)"/>
