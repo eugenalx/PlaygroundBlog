@@ -4,18 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Auth\Access\Gate;
+use Illuminate\Contracts\Auth\Access\Gate as AccessGate;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate as FacadesGate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
 
 class PostController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     $this->authorizeResource(Post::class, 'post');
-    // }
+    public function __construct()
+    {
+        $this->authorizeResource(Post::class, 'post');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -31,13 +35,15 @@ class PostController extends Controller
         ]);
     }
 
-    public function index(User $user, Post $post)
+    public function index(User $user)
     {
-        // $this->authorize('view', $post);
+        
+    //    if($user->id === request()->user()->id){
         return view('/posts/indexPost',[
-                'posts' => $user->posts->sortDesc()
+                'posts' => $user->posts->sortDesc(),
             ]);
-            
+    //    }  
+    //    abort(403);  
     }
 
     /**
@@ -47,7 +53,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Post::class);
+        // $this->authorize('create', Post::class);
         return view('posts/createPost');
     }
 
@@ -59,8 +65,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Post::class);
-        Post::create(array_merge($this->validatePost(),[
+           Post::create(array_merge($this->validatePost(),[
             'user_id' => request()->user()->id,
         ]));
         return redirect('/')->with('succes', 'The post has been saved');
@@ -86,7 +91,6 @@ class PostController extends Controller
      */
     public function edit(Request $request, Post $post)
     {
-        $this->authorize('update', $post);
         return view('posts/editPost', ['post' => $post]);
 
     }
@@ -100,10 +104,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        $this->authorize('update', $post);
-
         $attributes = $this->validatePost($post);
-     
         $post->update($attributes);
         return redirect('/')->with('succes', 'The post has been saved');
     }
@@ -116,7 +117,6 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $this->authorize('delete', $post);
         $post->delete();
         return back()->with('success','The post was deleted!');
     }

@@ -5,20 +5,26 @@ namespace App\Policies;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class PostPolicy
 {
     use HandlesAuthorization;
 
+    
     /**
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user, Post $post)
+    public function viewAny(User $user)
     {
-        //
+        if (request()->is('post/'.$user->id.'/index')) {
+            return  true;
+        }
     }
 
     /**
@@ -28,9 +34,10 @@ class PostPolicy
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Post $post)
+    public function view(User $user)
     {
-        return  $user->id === $post->user_id;
+        
+        return  $user->id === request()->user()->id;
     }
 
     /**
@@ -65,6 +72,7 @@ class PostPolicy
      */
     public function delete(User $user, Post $post)
     {
+        
         return ($user->id === $post->user_id) || $user->role === "admin";
 
     }

@@ -25,7 +25,6 @@ Route::middleware('can:user')->group(function() {
     Route::patch('/post/{post}/edit', [PostController::class,'update']);
 });
 
-
 Route::get('/',[PostController::class,'showAllPosts'])->middleware('auth');
 Route::get('/post/{user}/index', [PostController::class, 'index'])->middleware('auth');
 Route::delete('/deletePost/{post}',[PostController::class,'destroy'])->middleware('auth');

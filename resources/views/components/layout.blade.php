@@ -19,6 +19,11 @@
         <div class='bg-gray-100'>
             <x-header />
             {{ $slot }}
+            @if (session()->has('succes'))
+            <div id="show" class="bg-black col-2 fixed-bottom h9 m-3 ms-auto rounded text-light">
+                <p class="align-self-center mb-0 py-1 text-center">{{ session('succes') }}</p>
+            </div>
+        @endif
         </div >
     </body>
 </html>
